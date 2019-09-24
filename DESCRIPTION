@@ -1,0 +1,14 @@
+Package: shotplot
+Title: Plot NHL Shot Location Data
+Version: 0.1.0
+Authors@R: person("James", "Martherus", email = "james@martherus.com",
+                  role = c("aut", "cre"))
+Description: Includes various functions for plotting NHL shot location data. 'geom_shotplot()' is a ggplot geom that plots x,y coordinates on top of an NHL rink. 
+Depends: R (>= 3.1.0)
+License: GPL-3
+LazyData: true
+Imports:
+  grid,
+  png
+RoxygenNote: 6.1.1
+Encoding: UTF-8
