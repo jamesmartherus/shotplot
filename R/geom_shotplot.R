@@ -14,9 +14,9 @@
 #' @import png
 #' @import grid
 #' @export
+image <- png::readPNG("man/figures/full-rink.png")
 geom_shotplot <- function(...){
-  annotation_custom(grid::rasterGrob(system.file(file.path("man/figures", "full-rink.png"),
-                                                 package = "shotplot"), 
+  annotation_custom(grid::rasterGrob(image, 
                                width = unit(1,"npc"), 
                                height = unit(1,"npc"))) + geom_point() + coord_flip()
 }
