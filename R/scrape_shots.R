@@ -1,11 +1,17 @@
 #' Scrapes the NHL API for Shot Location Data
 #' 
-#' Scrapes the NHL Live Data for shot location data including coordinates, shot type,  
-#' @param ... Passed to [ggplot2::geom_point()]
+#' Scrapes the NHL Live Data for shot location data including coordinates, shot type,
+#' shooting player name and team.
+#' 
+#' @param start_season The starting year of the first season to be scraped. For example, "2016"
+#' for the 2016-2017 season.
+#' @param end_season The starting year of the last season to be scraped. For example, "2016"
+#' for the 2016-2017 season.
 #' @keywords json curl
 #' @examples
 #' scrape_shots(start_season=2016, end_season=2016)
 #' @import curl
+#' @import RCurl
 #' @import jsonlite
 #' @import progress
 #' @export
@@ -31,9 +37,10 @@ scrape_shots <- function(start_season=2016, end_season=2016){
   shot_df <- data.frame()
   pb <- progress_bar$new(total = length(urls))
   for(u in 1:length(urls)){
+    if(!url.exists(urls[u])){next} # skip URLs that don't exist
     whole_file <- jsonlite::fromJSON(curl::curl(urls[u]))
     all_plays <- whole_file$liveData$plays$allPlays
-    if(length(all_plays)==0){next}
+    if(length(all_plays)==0){next} # some games don't include play-by-play data
     event_type <- whole_file$liveData$plays$allPlays$result$eventTypeId
     for(p in 1:nrow(all_plays)){
       if(event_type[p] %in% shot_types){
