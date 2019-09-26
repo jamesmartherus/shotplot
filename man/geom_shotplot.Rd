@@ -6,6 +6,9 @@
 \usage{
 geom_shotplot(...)
 }
+\arguments{
+\item{...}{Passed to [ggplot2::geom_point()]}
+}
 \description{
 Creates a shot location plot. Calls geom_point() with an image
 of an NHL rink as the background.
