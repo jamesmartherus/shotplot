@@ -1,39 +1,52 @@
-library(jsonlite)
-library(curl)
-library(purr)
-
-get_shots <- function(start_season=2014, end_season=2019){
-  years <- start_season:end_season
+#' Scrapes the NHL API for Shot Location Data
+#' 
+#' Scrapes the NHL Live Data for shot location data including coordinates, shot type,  
+#' @param ... Passed to [ggplot2::geom_point()]
+#' @keywords json curl
+#' @examples
+#' scrape_shots(start_season=2016, end_season=2016)
+#' @import curl
+#' @import jsonlite
+#' @import progress
+#' @export
+scrape_shots <- function(start_season=2016, end_season=2016){
+  if(start_season > 2018){stop("That season has not begun yet.")}
+  if(start_season > end_season){stop("start_season must be before end_season")}
+  if(!is.numeric(start_season)){stop("start_season must be an integer")}
+  if(!is.numeric(end_season)){stop("end_season must be an integer")}
+  if(start_season==end_season){years <- start_season}
+  if(start_season < end_season){years <- start_season:end_season}
   urls <- NULL
   for(year in years){
-    #if(game_types="reg_season"){
-      if(year >= 2017){gms <- 1271}
-      if(year < 2017){gms <- 1230}
-      for(gm in 1:gms){
-        game_num= formatC(gm, width=4, flag="0")
-        game_id = paste0(as.character(year),"02",game_num)
-        url = paste0("https://statsapi.web.nhl.com/api/v1/game/",game_id,"/feed/live")
-        urls <- c(urls, url)
+    if(year >= 2017){gms <- 1271}
+    if(year < 2017){gms <- 1230}
+    for(gm in 1:gms){
+      game_num= formatC(gm, width=4, flag="0")
+      game_id = paste0(as.character(year),"02",game_num)
+      url = paste0("https://statsapi.web.nhl.com/api/v1/game/",game_id,"/feed/live")
+      urls <- c(urls, url)
+    }
+  }
+  shot_types <- c("SHOT","MISSED_SHOT","BLOCKED_SHOT","GOAL")
+  shot_df <- data.frame()
+  pb <- progress_bar$new(total = length(urls))
+  for(u in 1:length(urls)){
+    whole_file <- jsonlite::fromJSON(curl::curl(urls[u]))
+    all_plays <- whole_file$liveData$plays$allPlays
+    if(length(all_plays)==0){next}
+    event_type <- whole_file$liveData$plays$allPlays$result$eventTypeId
+    for(p in 1:nrow(all_plays)){
+      if(event_type[p] %in% shot_types){
+        play <- data.frame(shot_type=all_plays$result$event[p],
+                           x=all_plays$coordinates$x[p],
+                           y=all_plays$coordinates$y[p],
+                           team=all_plays$team$name[p],
+                           shooter=all_plays$players[p][[1]]$player$fullName[all_plays$players[p][[1]]$playerType=="Shooter" | all_plays$players[p][[1]]$playerType=="Scorer"])
+        shot_df <- rbind(shot_df, play)
       }
-   # }
+    }
+    pb$tick()
+    Sys.sleep(1 / 100)
   }
-  return(urls)
+  return(shot_df)
 }
-
-shot_types <- c("SHOT","MISSED_SHOT","BLOCKED_SHOT","GOAL")
-game_urls <- get_shots()
-
-shot_df <- data.frame()
-whole_file <- jsonlite::fromJSON(curl::curl(game_urls[1]))
-all_plays <- whole_file$liveData$plays$allPlays
-event_type <- whole_file$liveData$plays$allPlays$result$eventTypeId
-for(p in 1:nrow(all_plays)){
-  if(event_type[p] %in% shot_types){
-    play <- data.frame(x=all_plays$coordinates$x[p],
-                       y=all_plays$coordinates$y[p],
-                       team=all_plays$team$name[p],
-                       shooter=all_plays$players[p][[1]]$player$fullName[all_plays$players[p][[1]]$playerType=="Shooter"])
-    shot_df <- rbind(shot_df, play)
-  }
-}
-

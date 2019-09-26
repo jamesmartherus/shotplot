@@ -34,6 +34,8 @@ ggplot(data, aes(x = x_coords, y = y_coords)) +
 
 `scrape_shots()` uses the NHL API to access shot location data, including x and y coordinates, shooting player's name, and shooting player's team. `scrape_shots` takes two arguments - `start_season` and `end_season`. Both arguments are integers and set the range of shots to be scraped.
 
+The scraping process can be lengthy, so I recommend scraping one season at a time. The function includes a progress bar. I tend to use the `beepr` package to alert me when the process is complete. 
+
 ### Usage
 
 `scrape_shots(start_season=2014, end_season=2019)`
