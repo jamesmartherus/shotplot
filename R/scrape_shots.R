@@ -14,7 +14,7 @@
 #' @import RCurl
 #' @import jsonlite
 #' @import progress
-#' @import dplyr
+#' @import tibble
 #' @export
 scrape_shots <- function(start_season=2016, end_season=2016){
   if(start_season > 2018){stop("That season has not begun yet.")}
@@ -45,7 +45,7 @@ scrape_shots <- function(start_season=2016, end_season=2016){
     event_type <- whole_file$liveData$plays$allPlays$result$eventTypeId
     for(p in 1:nrow(all_plays)){
       if(event_type[p] %in% shot_types){
-        play <- dplyr::tibble(shot_type=all_plays$result$event[p],
+        play <- tibble::tibble(shot_type=all_plays$result$event[p],
                            x=all_plays$coordinates$x[p],
                            y=all_plays$coordinates$y[p],
                            team=all_plays$team$name[p],
@@ -55,6 +55,7 @@ scrape_shots <- function(start_season=2016, end_season=2016){
     }
     pb$tick()
     Sys.sleep(1 / 100)
+    print(urls[u])
   }
   return(shot_df)
 }
