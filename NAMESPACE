@@ -2,6 +2,7 @@
 
 export(geom_shotplot)
 export(scrape_shots)
+import(RCurl)
 import(curl)
 import(grid)
 import(jsonlite)

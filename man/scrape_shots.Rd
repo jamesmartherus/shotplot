@@ -7,10 +7,15 @@
 scrape_shots(start_season = 2016, end_season = 2016)
 }
 \arguments{
-\item{...}{Passed to [ggplot2::geom_point()]}
+\item{start_season}{The starting year of the first season to be scraped. For example, "2016"
+for the 2016-2017 season.}
+
+\item{end_season}{The starting year of the last season to be scraped. For example, "2016"
+for the 2016-2017 season.}
 }
 \description{
 Scrapes the NHL Live Data for shot location data including coordinates, shot type,
+shooting player name and team.
 }
 \examples{
 scrape_shots(start_season=2016, end_season=2016)
