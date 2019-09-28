@@ -38,7 +38,7 @@ scrape_shots <- function(start_season=2016, end_season=2016){
   shot_df <- data.frame()
   pb <- progress_bar$new(total = length(urls))
   for(u in 1:length(urls)){
-    if(httr:http_error(urls[u])){next} # skip URLs that don't exist
+    if(httr::http_error(urls[u])==TRUE){next} # skip URLs that don't exist
     whole_file <- jsonlite::fromJSON(curl::curl(urls[u]))
     all_plays <- whole_file$liveData$plays$allPlays
     if(length(all_plays)==0){next} # some games don't include play-by-play data
