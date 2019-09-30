@@ -55,7 +55,7 @@ scrape_shots <- function(start_season=2016, end_season=2016){
     }
     pb$tick()
     Sys.sleep(1 / 100)
-    print(urls[u])
+    #print(urls[u])
   }
   return(shot_df)
 }
