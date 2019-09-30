@@ -45,6 +45,9 @@ The scraping process can be lengthy, so I recommend scraping one season at a tim
 `shot_data <- scrape_shots(start_season=2015, end_season=2016)`
 
 
+## Acknowledgements
+
+- Graphic for NHL rink generated using code from [War on Ice's](https://github.com/war-on-ice) excellent `nhlscrapr` [package](https://github.com/war-on-ice/nhlscrapr-full).
 
 
 
